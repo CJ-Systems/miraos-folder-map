@@ -1,0 +1,7 @@
+# generated run artifacts (default --out dir + any local out/)
+folder-map-out/
+out/
+
+# python
+__pycache__/
+*.pyc
