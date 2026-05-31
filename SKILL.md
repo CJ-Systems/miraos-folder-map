@@ -5,13 +5,13 @@ description: Map a folder of scattered files (notes, backups, recovered AI work,
 
 # folder-map
 
-This is the folder-map skill. When a user wants to understand a folder full of scattered files — a backup drive, a notes pile, recovered AI work, an old project dir they've lost the thread on — this file tells you how to run the read-only scanning engine in `scripts/` and how to translate its results into user-facing voice.
+This is the folder-map skill. When a user wants to understand a folder full of scattered files — a backup drive, a notes pile, recovered AI work, an old project dir they've lost the thread on — this file tells you how to run the read-only scanning engine in `dna/folder_map/` and how to translate its results into user-facing voice.
 
 **The promise this skill makes to the user:** *help them see their existing work clearly before they decide what to do with it.* Visibility before action. It maps their mess; it does not translate their mess into someone else's productivity system, and it never touches a single file.
 
 **The hybrid pattern:**
 - *You* (the agent) own intent parsing, judgment calls (which folder, when to offer this), and voice — every sentence the user reads, you wrote.
-- *The scripts* in `scripts/` own deterministic mechanics. They walk the folder read-only and return a single JSON status object on stdout describing what happened, plus a written report (`report.md` + `report.html`) and a structured `clusters.json`.
+- *The engine modules* in `dna/folder_map/` own deterministic mechanics. They walk the folder read-only and return a single JSON status object on stdout describing what happened, plus a written report (`report.md` + `report.html`) and a structured `clusters.json`.
 - The user sees only your voice. Script JSON, progress chatter, and the raw report files are your INPUTS, never the user's output (until you choose to hand them the HTML to open or screenshot).
 
 ## What's available so far
@@ -45,13 +45,13 @@ Pick a working directory **outside** the folder being scanned, and pass the same
 
 ```
 # 1. Walk the folder (read-only) -> <out>/inventory.jsonl
-python3 ~/.claude/skills/folder-map/scripts/scan.py "<FOLDER>" --out "<OUT>"
+python3 ~/.claude/skills/folder-map/dna/folder_map/scan.py "<FOLDER>" --out "<OUT>"
 
 # 2. Cluster the inventory -> <out>/clusters.json
-python3 ~/.claude/skills/folder-map/scripts/cluster.py --out "<OUT>"
+python3 ~/.claude/skills/folder-map/dna/folder_map/cluster.py --out "<OUT>"
 
 # 3. Render the report -> <out>/report.md + <out>/report.html
-python3 ~/.claude/skills/folder-map/scripts/report.py "<FOLDER>" --out "<OUT>"
+python3 ~/.claude/skills/folder-map/dna/folder_map/report.py "<FOLDER>" --out "<OUT>"
 ```
 
 Each stage prints exactly one line of JSON to stdout (capture it). Add `--redact` to the **report** stage only when the user intends to share or screenshot the report — it scrubs their username/home path from the rendered output. Default is off (real paths, for their own eyes).
@@ -99,4 +99,4 @@ Then hand off the artifact: "I've written a full report you can open — `report
 
 ## Where this is headed
 
-Each new capability gets its own stage (or flag) in `scripts/` and its own row in the status table. The pattern stays identical: scripts return JSON + artifacts, the agent translates to voice, the user reads the agent. Next candidates: same-name twin side-by-side comparison, projection views (PARA/GTD/Obsidian-MOC) over the same `clusters.json`, and optional ingest into a knowledge store.
+Each new capability gets its own stage (or flag) in `dna/folder_map/` and its own row in the status table. The pattern stays identical: scripts return JSON + artifacts, the agent translates to voice, the user reads the agent. Next candidates: same-name twin side-by-side comparison, projection views (PARA/GTD/Obsidian-MOC) over the same `clusters.json`, and optional ingest into a knowledge store.

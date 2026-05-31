@@ -228,6 +228,7 @@ def score_cluster(key_path, depth, members):
         key=lambda m: (
             0 if README_RE.match(parts_of(m["path"])[-1]) else 1,
             -m.get("sample_chars", 0),
+            m["path"],  # final tiebreaker so reps are deterministic
         ),
     )[:5]
 
@@ -265,7 +266,9 @@ def cluster(recs):
 
     clusters = []
     weak_loose = list(root_loose)
-    for (depth, key_path), members in groups.items():
+    # Iterate groups in sorted key order so cluster order doesn't depend on
+    # the inventory's file order.
+    for (depth, key_path), members in sorted(groups.items()):
         if len(members) >= MIN_CLUSTER_FILES:
             clusters.append(score_cluster(key_path, depth, members))
         else:
@@ -296,6 +299,11 @@ def cluster(recs):
         if not attached:
             unsorted_bucket.append(f["path"])
 
+    # Stable ordering for every emitted file list.
+    for c in clusters:
+        c["loose_files_attached"].sort()
+    unsorted_bucket.sort()
+
     # --- cross-bucket twins -------------------------------------------------
     # same child name appearing under more than one numeric bucket.
     by_child = defaultdict(list)
@@ -315,6 +323,7 @@ def cluster(recs):
                     "note": "possible same project / possible diverged copies",
                 }
             twins.append({"name": child, "buckets": buckets})
+    twins.sort(key=lambda t: t["name"])
 
     # --- preservation-bucket containers -------------------------------------
     # Numeric parents (2/3/4) render as explicit low-confidence containers;
@@ -350,9 +359,11 @@ def cluster(recs):
             "loose_files_attached": [],
         })
 
-    # Sort: confidence then size.
+    # Sort: confidence then size, with key_path as a final tiebreaker so
+    # equal-confidence, equal-size clusters always land in the same order.
     conf_rank = {"High": 0, "Medium": 1, "Low": 2}
-    clusters.sort(key=lambda c: (conf_rank[c["confidence"]], -c["file_count"]))
+    clusters.sort(key=lambda c: (conf_rank[c["confidence"]], -c["file_count"],
+                                 c["key_path"]))
 
     conf_dist = Counter(c["confidence"] for c in clusters)
 

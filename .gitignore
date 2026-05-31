@@ -5,3 +5,8 @@ out/
 # python
 __pycache__/
 *.pyc
+
+# packaging build artifacts
+build/
+dist/
+*.egg-info/
