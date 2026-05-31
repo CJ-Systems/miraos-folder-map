@@ -11,12 +11,8 @@ The stance is **organizational advisor, not automatic organizer**: visibility
 before action. It maps your mess; it doesn't translate your mess into someone
 else's productivity system.
 
-This project is the generalization of the Mira-OS read-only recovery-map spike
-(v0 was hardcoded to one folder for a build-in-public artifact). It was promoted
-out of that spike into its own canonical home at `~/dna/folder-map`. The original
-v0 spec and philosophy live in the Mira-OS repo at
-`docs/briefs/read-only-recovery-map-prototype.md`, with a provenance breadcrumb
-at `spikes/recovery-map/README.md`.
+This project began as a read-only recovery-map spike hardcoded to a single
+folder, then was generalized into the standalone tool here.
 
 ## Layout
 
@@ -32,34 +28,37 @@ folder-map/
 
 ## Install
 
-**The utility (primary).** End-user installs target `~/grid/tools/` directly —
-copy (or, once published, clone) this project there:
+Clone it anywhere you like and run it in place — there is no required location
+and no layout it imposes on you:
 
 ```bash
-cp -r folder-map ~/grid/tools/folder-map
-```
-
-For the dev setup it's a symlink instead, so edits to the canonical source at
-`~/dna/folder-map` go live immediately:
-
-```bash
-ln -s ~/dna/folder-map ~/grid/tools/folder-map
+git clone <repo-url> folder-map
+cd folder-map
+./folder-map /path/to/some/folder
 ```
 
 The Python is stdlib-only and runs anywhere `python3` does — no packages to
-install.
+install. (A future packaging step will also let you `pipx install` it so the
+`folder-map` command lands on your `PATH`.)
 
 **The Agent Skill wrapper (optional).** `SKILL.md` makes an agent the interactive
 front-end (the "agent IS the UI" pattern). It's optional — the engine runs fine
-without it. To enable it, expose this project at your harness's skill location
-(the dev setup uses a symlink):
+without it. To enable it, expose the project at wherever your harness discovers
+skills (for Claude Code that's `~/.claude/skills/`); a symlink keeps it editable
+in place:
 
 ```bash
-ln -s ~/dna/folder-map ~/.claude/skills/folder-map
+ln -s "$(pwd)" ~/.claude/skills/folder-map
 ```
 
 `SKILL.md` is the cross-vendor Agent Skills standard; only the discovery location
 varies per harness.
+
+**Optional — our own layout.** We keep Software 3.0 projects under a personal
+`~/grid/` + `~/dna/` convention and symlink tools into `~/grid/tools/`. You're
+welcome to mirror it, but nothing in folder-map needs it; the clone-anywhere
+setup above is the supported path. See `ROADMAP.md`/git history if you're
+curious how we run it.
 
 ## Run it
 

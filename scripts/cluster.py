@@ -36,7 +36,7 @@ GENERIC_DIR_NAMES = {
 MIN_CLUSTER_FILES = 4
 # Cluster directories at this depth from root (1 = top-level, 2 = bucket
 # child, etc). We cluster at depth 1 and 2 so children of numeric buckets
-# (e.g. 3/Mira Ember) earn their own labels.
+# (e.g. 3/project-notes) earn their own labels.
 CLUSTER_DEPTHS = (1, 2)
 
 README_RE = re.compile(r"^(readme|index)", re.I)
