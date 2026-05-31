@@ -31,10 +31,15 @@ Work happens on the `release/0.1.0` git-flow branch.
       now in-process (`cli.py` captures each stage's JSON via redirect_stdout).
       Stdlib only, zero deps. Verified three ways (clone shim, direct module,
       pip-installed console command from outside the repo).
-- [ ] **`tests/`** — smoke tests over a fixture folder; assert read-only.
-- [ ] **Stable-sort / determinism pass** (roadmap #5).
+- [x] **`tests/`** — 6 stdlib unittest cases over a fixture; the load-bearing
+      one asserts the scanned folder is byte-for-byte unchanged after a run.
+- [x] **Stable-sort / determinism pass** (roadmap #5) — `scan.py` sorts walk
+      order (dirnames + filenames); `cluster.py` iterates groups in sorted key
+      order and adds tiebreakers to reps/clusters/twins and sorts every emitted
+      file list. Two runs now produce identical `inventory.jsonl` + `clusters.json`
+      (modulo the `generated_at` stamp); a test enforces it.
 
-When the two unchecked items land, finish 0.1.0 (merge to main + develop, tag).
+All 0.1.0 items are done — ready to finish (merge to main + develop, tag).
 
 ### Deferred to 0.2.0+ (genuinely new capability, not "make it real")
 

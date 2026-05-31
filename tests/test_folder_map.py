@@ -112,6 +112,25 @@ class FolderMapTests(unittest.TestCase):
         self.assertGreaterEqual(summary["cluster_count"], 1,
                                 "fixture has two clusterable directories")
 
+    def test_output_is_deterministic(self):
+        """Two runs over the same folder produce identical clusters and
+        inventory (the only expected difference is the generated_at stamp)."""
+        fixture = self._make_fixture()
+        out1, out2 = self._tmpdir(), self._tmpdir()
+        _run_cli([str(fixture), "--out", out1])
+        _run_cli([str(fixture), "--out", out2])
+
+        # Inventory must be byte-identical.
+        self.assertEqual((Path(out1) / "inventory.jsonl").read_text(),
+                         (Path(out2) / "inventory.jsonl").read_text())
+
+        # Clusters must match once the timestamp is dropped.
+        c1 = json.loads((Path(out1) / "clusters.json").read_text())
+        c2 = json.loads((Path(out2) / "clusters.json").read_text())
+        c1.pop("generated_at", None)
+        c2.pop("generated_at", None)
+        self.assertEqual(c1, c2)
+
     def test_missing_target_is_handled(self):
         out = self._tmpdir()
         rc = _run_cli([str(Path(self._tmpdir()) / "does-not-exist"),

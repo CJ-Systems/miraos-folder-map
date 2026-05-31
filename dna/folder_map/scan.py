@@ -164,8 +164,11 @@ def scan(target: Path, out_dir: Path):
 
             # Prune skip dirs in-place so os.walk does not descend.
             dirnames[:] = [d for d in dirnames if d not in SKIP_DIRS]
+            # Sort in place so descent order is deterministic across machines
+            # (os.walk yields entries in filesystem order otherwise).
+            dirnames.sort()
 
-            for fname in filenames:
+            for fname in sorted(filenames):
                 fpath = dpath / fname
                 rel = os.path.relpath(fpath, target)
 
