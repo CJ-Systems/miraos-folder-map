@@ -8,23 +8,49 @@ tool. **Captured 2026-05-29.** Graduation cycle started 2026-05-31.
 Direction chosen: **"make it real & shareable"** — graduate the *clustering
 engine* (not a generic tree tool) to publishable quality, capability unchanged.
 
+Direction was a clean fork: **(a)** generalize the clustering engine, vs **(b)**
+a generic tree tool. Resolved to **(a)** — keep the evidence/confidence
+clustering as the product.
+
+Work happens on the `release/0.1.0` git-flow branch.
+
+### 0.1.0 — the graduation (in progress)
+
 - [x] **Single entry point** — `./folder-map /path [--out] [--redact]` runs all
       three stages and narrates in plain language; engine JSON is captured as
-      input, never shown raw. Subprocess-first (stages unchanged). Verified
-      end-to-end, read-only stance confirmed.
+      input, never shown raw. Verified end-to-end, read-only stance confirmed.
 - [x] **LICENSE** — MIT.
 - [x] **README refresh** — leads with the one-command surface; three-stage flow
       demoted to "under the hood."
-- [ ] `pyproject.toml` + console entry (`pipx install`, `folder-map` on PATH);
-      converts subprocess calls to in-process imports.
-- [ ] `tests/` — smoke tests over a fixture folder; assert read-only.
-- [ ] Stable-sort / determinism pass (roadmap #5).
+- [x] **Layout-neutral + no IP leak** — install no longer forces our `~/grid`
+      layout; all paths into the private Mira-OS repo removed (names may stay,
+      repo paths may not).
+- [x] **Packaging** — `pyproject.toml` + console entry (`folder-map` on PATH via
+      `pipx install`). Package lives at `dna/folder_map/` per our Software 3.0
+      `dna/ ≈ src/` convention (NOT a borrowed `src/` layout). Orchestrator is
+      now in-process (`cli.py` captures each stage's JSON via redirect_stdout).
+      Stdlib only, zero deps. Verified three ways (clone shim, direct module,
+      pip-installed console command from outside the repo).
+- [ ] **`tests/`** — smoke tests over a fixture folder; assert read-only.
+- [ ] **Stable-sort / determinism pass** (roadmap #5).
 
-**Parked engine finding (2026-05-31):** on a small/shallow fixture (8 files, a
-clear `proj-alpha` software project, same-name `config.bak` twins across two
-dirs) the engine produced 0 clusters / 8 loose and 0 twins — looks like a
-minimum-files-per-directory gate. Front door reports it faithfully; this is an
-*engine quality* issue for a later cycle, not a graduation blocker.
+When the two unchecked items land, finish 0.1.0 (merge to main + develop, tag).
+
+### Deferred to 0.2.0+ (genuinely new capability, not "make it real")
+
+These add features beyond graduating the existing tool, so they're out of scope
+for the 0.1.0 "make it real & shareable" direction:
+
+- Ignore-rule **flag** (#2) — rules exist + are documented, just not exposed.
+- Configurable max depth (#3).
+- `--format` selector for tree / JSON / Markdown output (#4).
+- Optional metadata flags: size / ext / mtime (#6) — gathered, not surfaced.
+
+**Parked engine finding (2026-05-31):** on a small/shallow fixture the engine
+produced 0 clusters where a software project + same-name twins were obviously
+present — `MIN_CLUSTER_FILES = 4` gates small directories out. Front door
+reports it faithfully; this is an *engine quality* issue for a later cycle, not
+a graduation blocker.
 
 ## The quality bar (Mira's framing)
 

@@ -111,6 +111,17 @@ Each stage prints one JSON status line to stdout; progress goes to stderr. The
 `folder-map` command captures those status lines and translates them into the
 plain-language recap above.
 
+## Tests
+
+Stdlib `unittest`, no test dependencies. From the project root:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+The key test asserts the scanned folder is byte-for-byte unchanged after a full
+run — the read-only guarantee, enforced in CI-able form.
+
 ## Safety
 
 The scanned folder is strictly read-only: the scripts only `os.walk` and read
