@@ -18,9 +18,11 @@ folder, then was generalized into the standalone tool here.
 
 ```
 folder-map/
-├── folder-map          # the command — one entry point over all three stages
-├── SKILL.md            # how the agent runs + narrates this (the UX layer)
-└── scripts/
+├── folder-map          # run-in-place shim:  ./folder-map /path
+├── pyproject.toml      # packaging — `pipx install .` puts folder-map on PATH
+├── SKILL.md            # how an agent runs + narrates this (optional UX layer)
+└── dna/folder_map/        # dna/ ≈ src/ — our Software 3.0 source dir
+    ├── cli.py          # the command — one entry point over all three stages
     ├── scan.py         # read-only walker             -> <out>/inventory.jsonl
     ├── cluster.py      # directory-primary heuristics  -> <out>/clusters.json
     └── report.py       # clusters.json -> <out>/report.md + report.html
@@ -38,8 +40,15 @@ cd folder-map
 ```
 
 The Python is stdlib-only and runs anywhere `python3` does — no packages to
-install. (A future packaging step will also let you `pipx install` it so the
-`folder-map` command lands on your `PATH`.)
+install.
+
+To put the `folder-map` command on your `PATH` instead of running it in place,
+install it (still zero dependencies):
+
+```bash
+pipx install .          # from a clone — or `pipx install <repo-url>` directly
+folder-map /path/to/some/folder
+```
 
 **The Agent Skill wrapper (optional).** `SKILL.md` makes an agent the interactive
 front-end (the "agent IS the UI" pattern). It's optional — the engine runs fine
@@ -93,9 +102,9 @@ You can run them yourself if you want to inspect the intermediate
 
 ```bash
 OUT=folder-map-out
-python3 scripts/scan.py    /path/to/folder --out "$OUT"
-python3 scripts/cluster.py                 --out "$OUT"
-python3 scripts/report.py  /path/to/folder --out "$OUT"   # add --redact to share
+python3 dna/folder_map/scan.py    /path/to/folder --out "$OUT"
+python3 dna/folder_map/cluster.py                 --out "$OUT"
+python3 dna/folder_map/report.py  /path/to/folder --out "$OUT"   # --redact to share
 ```
 
 Each stage prints one JSON status line to stdout; progress goes to stderr. The
