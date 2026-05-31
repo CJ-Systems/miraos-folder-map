@@ -22,6 +22,7 @@ at `spikes/recovery-map/README.md`.
 
 ```
 folder-map/
+├── folder-map          # the command — one entry point over all three stages
 ├── SKILL.md            # how the agent runs + narrates this (the UX layer)
 └── scripts/
     ├── scan.py         # read-only walker             -> <out>/inventory.jsonl
@@ -45,7 +46,8 @@ For the dev setup it's a symlink instead, so edits to the canonical source at
 ln -s ~/dna/folder-map ~/grid/tools/folder-map
 ```
 
-The Python is stdlib-only and runs anywhere `python3` does.
+The Python is stdlib-only and runs anywhere `python3` does — no packages to
+install.
 
 **The Agent Skill wrapper (optional).** `SKILL.md` makes an agent the interactive
 front-end (the "agent IS the UI" pattern). It's optional — the engine runs fine
@@ -59,17 +61,47 @@ ln -s ~/dna/folder-map ~/.claude/skills/folder-map
 `SKILL.md` is the cross-vendor Agent Skills standard; only the discovery location
 varies per harness.
 
-## Run the engine directly (no agent)
+## Run it
+
+One command maps the folder and writes the report:
 
 ```bash
-OUT=$(mktemp -d)
+./folder-map /path/to/folder              # writes ./folder-map-out/report.html
+./folder-map /path/to/folder --redact     # scrub your home path, for sharing
+./folder-map /path/to/folder --out ~/maps/project   # choose where output goes
+# then open folder-map-out/report.html
+```
+
+It runs the three stages in order and narrates the run in plain language —
+nothing in the scanned folder is touched. Example:
+
+```
+Mapping (read-only): /home/you/messy-folder
+  1/3  Scanning files…
+  2/3  Clustering related files…
+  3/3  Writing the report…
+
+Mapped  messy-folder/  (read-only — nothing in it was changed)
+  428 files seen · 12 clusters · 3 high-confidence, 6 medium, 3 low
+  Report: folder-map-out/report.html
+```
+
+### Under the hood (running the stages by hand)
+
+The `folder-map` command is a thin orchestrator over three independent stages.
+You can run them yourself if you want to inspect the intermediate
+`inventory.jsonl` / `clusters.json`, or wire a stage into something else:
+
+```bash
+OUT=folder-map-out
 python3 scripts/scan.py    /path/to/folder --out "$OUT"
 python3 scripts/cluster.py                 --out "$OUT"
 python3 scripts/report.py  /path/to/folder --out "$OUT"   # add --redact to share
-# open "$OUT/report.html"
 ```
 
-Each stage prints one JSON status line to stdout; progress goes to stderr.
+Each stage prints one JSON status line to stdout; progress goes to stderr. The
+`folder-map` command captures those status lines and translates them into the
+plain-language recap above.
 
 ## Safety
 

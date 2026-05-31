@@ -1,9 +1,30 @@
 # folder-map — graduation roadmap
 
 Direction for taking folder-map from "our utility" to a standalone, publishable
-tool. **Captured 2026-05-29, not started.** This is a parked roadmap for a future
-build cycle — recorded here so it survives the session, not a task list to start
-now.
+tool. **Captured 2026-05-29.** Graduation cycle started 2026-05-31.
+
+## Progress (2026-05-31)
+
+Direction chosen: **"make it real & shareable"** — graduate the *clustering
+engine* (not a generic tree tool) to publishable quality, capability unchanged.
+
+- [x] **Single entry point** — `./folder-map /path [--out] [--redact]` runs all
+      three stages and narrates in plain language; engine JSON is captured as
+      input, never shown raw. Subprocess-first (stages unchanged). Verified
+      end-to-end, read-only stance confirmed.
+- [x] **LICENSE** — MIT.
+- [x] **README refresh** — leads with the one-command surface; three-stage flow
+      demoted to "under the hood."
+- [ ] `pyproject.toml` + console entry (`pipx install`, `folder-map` on PATH);
+      converts subprocess calls to in-process imports.
+- [ ] `tests/` — smoke tests over a fixture folder; assert read-only.
+- [ ] Stable-sort / determinism pass (roadmap #5).
+
+**Parked engine finding (2026-05-31):** on a small/shallow fixture (8 files, a
+clear `proj-alpha` software project, same-name `config.bak` twins across two
+dirs) the engine produced 0 clusters / 8 loose and 0 twins — looks like a
+minimum-files-per-directory gate. Front door reports it faithfully; this is an
+*engine quality* issue for a later cycle, not a graduation blocker.
 
 ## The quality bar (Mira's framing)
 
